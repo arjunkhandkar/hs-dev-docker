@@ -40,10 +40,17 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | \
   ghcup install stack ${STACK_VERSION} --set && \
   ghcup install cabal ${CABAL_VERSION} --set && \
   ghcup install fourmolu ${FOURMOLU_VERSION} --set && \
-  ghcup gc --cache --tmpdirs --hls-no-ghc && \
-  rm -rf /opt/.ghcup/ghc/${GHC_VERSION}/share/doc /opt/.ghcup/logs && \
+  ghcup install hlint ${HLINT_VERSION} --set && \
   stack config set system-ghc true --global && \
   stack config set install-ghc false --global && \
+  export CABAL_DIR=/tmp/cabal && \
   cabal update && \
-  cabal install ghcid-${GHCID_VERSION} weeder-${WEEDER_VERSION} hlint-${HLINT_VERSION} --installdir=/home/dev/.local/bin --install-method=copy && \
-  rm -rf /home/dev/.cabal/packages /home/dev/.cabal/store
+  cabal install ghcid-${GHCID_VERSION} weeder-${WEEDER_VERSION} \
+    --installdir=/home/dev/.local/bin \
+    --install-method=copy \
+    --enable-executable-dynamic \
+    --enable-executable-stripping && \
+  ghcup gc --cache --tmpdirs --share-dir --hls-no-ghc && \
+  find /opt/.ghcup/ghc/${GHC_VERSION}/lib -type f \( -name '*_p.a' -o -name '*_p.hi' -o -name '*_p.o' \) -delete && \
+  strip --strip-unneeded /home/dev/.local/bin/* 2>/dev/null || true && \
+  rm -rf /tmp/cabal /tmp/* /opt/.ghcup/logs ~/.cache/cabal ~/.local/state/cabal
