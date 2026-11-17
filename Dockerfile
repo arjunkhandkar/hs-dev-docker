@@ -50,7 +50,15 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | \
     --install-method=copy \
     --enable-executable-dynamic \
     --enable-executable-stripping && \
+  ghcup rm cabal ${CABAL_VERSION} && \
   ghcup gc --cache --tmpdirs --share-dir --hls-no-ghc && \
-  find /opt/.ghcup/ghc/${GHC_VERSION}/lib -type f \( -name '*_p.a' -o -name '*_p.hi' -o -name '*_p.o' \) -delete && \
-  strip --strip-unneeded /home/dev/.local/bin/* 2>/dev/null || true && \
-  rm -rf /tmp/cabal /tmp/* /opt/.ghcup/logs ~/.cache/cabal ~/.local/state/cabal
+  rm -f /opt/.ghcup/bin/ghcup && \
+  find /opt/.ghcup/ghc/${GHC_VERSION}/lib -type f \( \
+    -name '*_p.a' -o -name '*_p.hi' -o -name '*_p.o' \
+    -o name 'libHSghc-9*.a' -o -name 'haddock*' \
+  \) -delete && \
+  find /opt/.ghcup/ /home/dev/.local/bin/ -type f \( -executable -o -name '*.so' \) \
+    -exec strip --strip-unneeded {} + 2>/dev/null || true && \
+  find /opt/.ghcup/ghc/${GHC_VERSION}/lib -type f -name '*.a' \
+    -exec strip --strip-debug {} + 2>/dev/null || true && \
+  rm -rf /tmp/cabal /tmp/* /opt/.ghcup/logs /opt/.ghcup/trash ~/.cache/cabal ~/.local/state/cabal
