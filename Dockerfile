@@ -25,6 +25,8 @@ ARG STACK_VERSION=latest
 ARG FOURMOLU_VERSION=0.20.0.0
 ARG CABAL_VERSION=3.18.2.0
 ARG GHCID_VERSION=0.8.9
+ARG HLINT_VERSION=3.8
+ARG WEEDER_VERSION=2.9.0
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | \
   BOOTSTRAP_HASKELL_NONINTERACTIVE=1 \
@@ -40,5 +42,5 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | \
   stack config set system-ghc true --global && \
   stack config set install-ghc false --global && \
   cabal update && \
-  cabal install ghcid-${GHCID_VERSION} --installdir=/home/dev/.local/bin --install-method=copy && \
+  cabal install ghcid-${GHCID_VERSION} weeder-${WEEDER_VERSION} hlint-${HLINT_VERSION} --installdir=/home/dev/.local/bin --install-method=copy && \
   rm -rf /home/dev/.cabal/packages /home/dev/.cabal/store
