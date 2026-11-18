@@ -48,7 +48,6 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | \
   cabal install ghcid-${GHCID_VERSION} weeder-${WEEDER_VERSION} \
     --installdir=/home/dev/.local/bin \
     --install-method=copy \
-    --enable-executable-dynamic \
     --enable-executable-stripping && \
   ghcup rm cabal ${CABAL_VERSION} && \
   ghcup gc --cache --tmpdirs --share-dir --hls-no-ghc && \
