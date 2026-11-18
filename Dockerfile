@@ -55,10 +55,12 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | \
   rm -f /opt/.ghcup/bin/ghcup && \
   find /opt/.ghcup/ghc/${GHC_VERSION}/lib -type f \( \
     -name '*_p.a' -o -name '*_p.hi' -o -name '*_p.o' \
-    -o name 'libHSghc-9*.a' -o -name 'haddock*' \
+    -o -name '*.dyn_o' -o -name 'libHSghc-${GHC_VERSION}*.a' -o -name 'haddock*' \
   \) -delete && \
-  find /opt/.ghcup/ /home/dev/.local/bin/ -type f \( -executable -o -name '*.so' \) \
-    -exec strip --strip-unneeded {} + 2>/dev/null || true && \
-  find /opt/.ghcup/ghc/${GHC_VERSION}/lib -type f -name '*.a' \
-    -exec strip --strip-debug {} + 2>/dev/null || true && \
-  rm -rf /tmp/cabal /tmp/* /opt/.ghcup/logs /opt/.ghcup/trash ~/.cache/cabal ~/.local/state/cabal
+  strip --strip-unneeded \
+    /home/dev/.local/bin/* \
+    /opt/.ghcup/bin/stack* \
+    /opt/.ghcup/bin/hlint* \
+    /opt/.ghcup/bin/fourmolu* 2>/dev/null || true && \
+  rm -rf /tmp/cabal /tmp/* /opt/.ghcup/logs /opt/.ghcup/trash ~/.cache/cabal ~/.local/state/cabal && \
+  du -sh /opt/.ghcup /opt/.ghcup/ghc/${GHC_VERSION}/lib /home/dev/.local/bin
